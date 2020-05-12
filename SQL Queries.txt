@@ -1,0 +1,63 @@
+:/Query 1/:
+
+Select g.Name as Genre_Name,
+round(SUM(il.Quantity*il.UnitPrice),2) as TotalSales
+FROM Genre g
+JOIN Track t
+ON g.GenreId=t.GenreId
+JOIN InvoiceLine il
+ON t.TrackId=il.TrackId
+JOIN Invoice i
+on il.InvoiceId=i.InvoiceId
+GROUP by g.Name
+ORDER by TotalSales DESC;
+
+:/Query 2/:
+Select i.BillingCountry, round(SUM(il.Quantity*il.UnitPrice),2) as Total_Sales
+from Invoice i 
+JOIN InvoiceLine il
+on i.InvoiceId=il.InvoiceId
+Join Track t 
+on il.TrackId=t.TrackId
+JOIN Genre g
+on t.GenreId=g.GenreId
+GROUP by i.BillingCountry
+HAVING g.name IN ('Rock', 'Latin', 'Metal', 'Alternative & Punk', 'TV Shows')
+ORDER by Total_Sales desc 
+Limit 10
+
+:/Query 3/:
+
+SELECT ar.ArtistId, ar.name as name, count(DISTINCT t.TrackId) as songs from Track t
+JOIN Album al
+on t.AlbumId=al.AlbumId
+JOIN 
+Artist ar
+on al.ArtistId=ar.ArtistId
+JOIN Genre g
+on t.GenreId=g.GenreId 
+WHERE g.name='Rock'
+group by ar.ArtistId
+ORDER by songs desc
+Limit 10
+
+
+:/Query 4/:
+
+Select 
+e.FirstName || ' ' || e.LastName as Employee_Name,
+round(SUM(il.Quantity*il.UnitPrice),2) as Total_Rock_Business_Contribution
+FROM Employee e
+JOIN Customer c
+ON EmployeeId=SupportRepId
+JOIN Invoice i
+ON c.CustomerId=i.CustomerId
+JOIN InvoiceLine il
+ON i.InvoiceId=il.InvoiceId
+JOIN Track t
+ON il.TrackId=t.TrackId
+JOIN Genre g
+ON t.GenreId=g.GenreId
+WHERE g.name = 'Rock'
+GROUP by e.EmployeeId
+ORDER by Total_Rock_Business_Contribution DESC
